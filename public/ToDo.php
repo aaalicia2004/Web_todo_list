@@ -12,14 +12,19 @@ if (isset($_GET['id'])){ //only used when something is removed from the to do li
 	// header("Location: /ToDo.php");
 	// exit (0);
 }
-if (isset($_POST['NewToDoItem'])){ //only used when something is posted in the add a new to do item
-	$item = trim($_POST['NewToDoItem']);
+
+try{
+	if (isset($_POST['NewToDoItem'])){ //only used when something is posted in the add a new to do item
+		$item = trim($_POST['NewToDoItem']);
 	
-	if (strlen($item) == 0 || strlen($item) > 240){
-		throw new Exception('Invalid entry! Please make input greater than 0 characters and less than 240 characters!');
+		if (strlen($item) == 0 || strlen($item) > 240){
+			throw new Exception('Invalid entry! Please make input greater than 0 characters and less than 240 characters!');
 		}
-	array_push($list, $_POST['NewToDoItem']);
-	$listObject->write($list);
+		array_push($list, $_POST['NewToDoItem']);
+		$listObject->write($list);
+	}	
+}catch(Exception $e){
+		$errorMessage = "Please check your entry to make sure it is greater than 0 characters long and less than 240 characthers!";
 }
 // Verify there were uploaded files and no errors
 //var_dump($_FILES);
@@ -50,6 +55,9 @@ if (count($_FILES) > 0 && $_FILES['UploadFile1']['error'] == 0 && $_FILES['Uploa
 </head>
 <body>
 	<h1>To-Do List</h1>
+<? if(isset ($errorMessage)): ?>
+	<?= "<p>$errorMessage</p>"; ?>
+<? endif; ?>
 <? if (isset($saved_filename)): ?>
    <?= "<p>You can download your file <a href='/uploads/{$saved_filename}'>here</a></p>"; ?>
 <? endif; ?>
